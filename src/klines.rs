@@ -24,7 +24,7 @@ pub struct Kline {
     open_price: f32,
     high_price: f32,
     low_price: f32,
-    close_price: f32,
+    pub close_price: f32,
     volume: f32,
     close_time: i64,
 }
