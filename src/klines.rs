@@ -18,7 +18,7 @@ pub struct _Kline(
 #[derive(Deserialize)]
 pub struct _Klines(pub Vec<_Kline>);
 
-#[derive(Debug)]
+#[allow(dead_code)]
 pub struct Kline {
     open_time: i64,
     open_price: f32,
@@ -37,7 +37,7 @@ impl Kline {
             high_price: data.2.parse().unwrap(),
             low_price: data.3.parse().unwrap(),
             close_price: data.4.parse().unwrap(),
-            volume: data.5.parse().unwrap(), 
+            volume: data.5.parse().unwrap(),
             close_time: data.6,
         }
     }

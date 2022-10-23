@@ -1,45 +1,39 @@
-use crate::klines::{_Klines, Kline};
+use bot::Bot;
+use clap::Parser;
+use std::time;
 
+mod bot;
+mod indicators;
 mod klines;
 
-async fn get_data() -> _Klines {
-    let client = reqwest::Client::new();
-    let response = client
-        .get("https://api.binance.com/api/v3/klines")
-        .query(&[("symbol", "BTCUSDT"), ("interval", "30m")])
-        .send()
-        .await
-        .unwrap();
+#[derive(Parser)]
+#[command(version, about)]
+struct Cli {
+    symbol: String,
 
-    let data = response.json::<_Klines>().await.unwrap();
+    #[arg(long, default_value_t = 10)]
+    fast_ema: u32,
 
-    data
-}
+    #[arg(long, default_value_t = 100)]
+    slow_ema: u32,
 
-fn get_ema(klines: &Vec<Kline>, span: u32) -> f32 {
-    let k: f32 = 2.0 / (span + 1) as f32;
-    let (first, rest) = klines.split_first().unwrap();
+    #[arg(short, long, default_value_t=String::from("30m"))]
+    interval: String,
 
-    let mut ema = first.close_price;
-
-    for kline in rest {
-        let price = kline.close_price;
-        ema = k * price + (1.0 - k) * ema;
-    }
-
-    ema
+    #[arg(short, long, default_value_t=10*60)]
+    sleep_duration: u64,
 }
 
 #[tokio::main]
 async fn main() {
-    let data = get_data().await;
+    let cli = Cli::parse();
 
-    let mut klines: Vec<Kline> = data.0.iter().map(|kline| {
-        Kline::new(kline)
-    }).collect();
-
-    // remove the open candle 
-    klines.pop();
-
-    println!("{}", get_ema(&klines, 100))
+    let bot = Bot::new(cli.symbol);
+    bot.run(
+        cli.slow_ema,
+        cli.fast_ema,
+        &cli.interval.to_owned(),
+        time::Duration::from_secs(cli.sleep_duration),
+    )
+    .await;
 }
