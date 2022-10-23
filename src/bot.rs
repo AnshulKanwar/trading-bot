@@ -1,6 +1,13 @@
 use crate::indicators;
 use crate::klines::{Kline, _Klines};
 use std::{thread, time};
+use clap::ValueEnum;
+
+#[derive(Clone, ValueEnum)]
+pub enum Side {
+    Buy,
+    Sell
+}
 
 pub struct Bot {
     client: reqwest::Client,
@@ -20,21 +27,35 @@ impl Bot {
 
     pub async fn run(
         &self,
-        slow_ema: u32,
         fast_ema: u32,
+        slow_ema: u32,
         interval: &str,
-        sleep_duration: time::Duration,
+        sleep_duration: &time::Duration,
+        last_move: &Side,
     ) {
+
+        let mut last_move = last_move.to_owned();
         loop {
             let klines = self.fetch_data(interval).await;
-            let slow_ema_value = indicators::get_ema(&klines, slow_ema);
             let fast_ema_value = indicators::get_ema(&klines, fast_ema);
+            let slow_ema_value = indicators::get_ema(&klines, slow_ema);
 
-            println!(
-                "slow_ema = {} \t fast_ema = {}",
-                slow_ema_value, fast_ema_value
-            );
-            thread::sleep(sleep_duration);
+            match last_move {
+                Side::Sell => {
+                    if fast_ema_value > slow_ema_value {
+                        println!("Buying...");
+                        last_move = Side::Buy;
+                    }
+                },
+                Side::Buy => {
+                    if fast_ema_value < slow_ema_value {
+                        println!("Selling...");
+                        last_move = Side::Sell;
+                    } 
+                },
+            }
+
+            thread::sleep(*sleep_duration);
         }
     }
 

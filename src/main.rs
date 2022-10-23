@@ -1,4 +1,4 @@
-use bot::Bot;
+use bot::{Bot, Side};
 use clap::Parser;
 use std::time;
 
@@ -22,6 +22,12 @@ struct Cli {
 
     #[arg(short, long, default_value_t=10*60)]
     sleep_duration: u64,
+
+    #[arg(short, long)]
+    quantity: f32,
+
+    #[arg(long, value_enum)]
+    last_move: Side,
 }
 
 #[tokio::main]
@@ -30,10 +36,11 @@ async fn main() {
 
     let bot = Bot::new(cli.symbol);
     bot.run(
-        cli.slow_ema,
         cli.fast_ema,
+        cli.slow_ema,
         &cli.interval.to_owned(),
-        time::Duration::from_secs(cli.sleep_duration),
+        &time::Duration::from_secs(cli.sleep_duration),
+        &cli.last_move,
     )
     .await;
 }
