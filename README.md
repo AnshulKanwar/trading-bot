@@ -19,20 +19,30 @@ Now run the bot using
 
 ```
 $ trading-bot --help
-Usage: trading-bot [OPTIONS] --quantity <QUANTITY> --last-move <LAST_MOVE> <SYMBOL>
+A command line trading bot for binance
+
+Usage: trading-bot [OPTIONS] --quantity <QUANTITY> --initial-side <INITIAL_SIDE> <SYMBOL>
 
 Arguments:
-  <SYMBOL>  
+  <SYMBOL>  symbol to use for trading. ex BTCUSDT
 
 Options:
-      --fast-ema <FAST_EMA>              [default: 10]
-      --slow-ema <SLOW_EMA>              [default: 100]
-  -i, --interval <INTERVAL>              [default: 30m]
-  -s, --sleep-duration <SLEEP_DURATION>  [default: 600]
-  -q, --quantity <QUANTITY>              
-      --last-move <LAST_MOVE>            [possible values: buy, sell]
-  -h, --help                             Print help information
-  -V, --version                          Print version information
+  -q, --quantity <QUANTITY>
+          quantity of symbol to trade with
+      --fast-ema <FAST_EMA>
+          the value of span for fast ema [default: 10]
+      --slow-ema <SLOW_EMA>
+          the value of span for slow ema [default: 100]
+  -i, --interval <INTERVAL>
+          the interval or the time frame for the candle sticks [default: 30m]
+  -s, --sleep-duration <SLEEP_DURATION>
+          the duration the bot will wait before fetching for data [default: 10]
+      --initial-side <INITIAL_SIDE>
+          the initial position [possible values: buy, sell]
+  -h, --help
+          Print help information
+  -V, --version
+          Print version information
 ```
 
 For example to run EMA crossover strategy with fast ema 20 and slow ema 100 on 10 BTCUSDT pair: 
