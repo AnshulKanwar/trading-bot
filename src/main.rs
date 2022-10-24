@@ -27,6 +27,6 @@ fn main() {
         cli.slow_ema,
         &cli.interval.to_owned(),
         &time::Duration::from_secs(cli.sleep_duration * 60),
-        &cli.last_move,
+        &cli.initial_side,
     );
 }

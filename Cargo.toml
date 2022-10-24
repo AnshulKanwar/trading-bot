@@ -1,7 +1,10 @@
 [package]
 name = "trading-bot"
 version = "0.1.0"
+description = "A command line trading bot for binance"
+repository = "https://github.com/AnshulKanwar/trading-bot"
 edition = "2021"
+authors = ["Anshul Kanwar <me@anshulkanwar.tech>"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 

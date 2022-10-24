@@ -42,5 +42,6 @@ $ cargo run -- --fast-ema 20 --slow-ema 100  --quantity 10 --last-move buy BTCUS
 
 # TODO
 - [ ] Add error handling
+- [ ] Remove the use of `initial_side`
 - [x] Add logging
 - [x] Add cli
