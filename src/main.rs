@@ -5,6 +5,7 @@ use std::time;
 mod bot;
 mod indicators;
 mod klines;
+mod util;
 
 #[derive(Parser)]
 #[command(version, about)]
@@ -30,17 +31,21 @@ struct Cli {
     last_move: Side,
 }
 
-#[tokio::main]
-async fn main() {
+fn main() {
     let cli = Cli::parse();
 
-    let bot = Bot::new(cli.symbol);
+    let api_key = dotenv::var("API_KEY").unwrap();
+    let api_secret = dotenv::var("API_SECRET").unwrap();
+
+    let bot = Bot::new(&api_key, &api_secret);
+
     bot.run(
+        &cli.symbol,
+        cli.quantity,
         cli.fast_ema,
         cli.slow_ema,
         &cli.interval.to_owned(),
         &time::Duration::from_secs(cli.sleep_duration),
         &cli.last_move,
-    )
-    .await;
+    );
 }
