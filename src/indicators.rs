@@ -13,3 +13,5 @@ pub fn get_ema(klines: &Vec<Kline>, span: u32) -> f32 {
 
     ema
 }
+
+// TODO: Write tests
