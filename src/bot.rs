@@ -3,6 +3,7 @@ use crate::klines::{Kline, _Klines};
 use crate::util;
 use chrono::Utc;
 use clap::ValueEnum;
+use log::{info, debug};
 use reqwest::{header, Url};
 use std::{fmt, thread, time};
 
@@ -68,10 +69,13 @@ impl Bot {
             let fast_ema_value = indicators::get_ema(&klines, fast_ema);
             let slow_ema_value = indicators::get_ema(&klines, slow_ema);
 
+            debug!("fast ema ({}) = {}", fast_ema, fast_ema_value);
+            debug!("slow ema ({}) = {}", slow_ema, slow_ema_value);
+
             match last_move {
                 Side::Sell => {
                     if fast_ema_value > slow_ema_value {
-                        println!("Buying...");
+                        info!("fast ema > slow ema");
 
                         self.order_market(symbol, &Side::Buy, quantity);
 
@@ -80,7 +84,7 @@ impl Bot {
                 }
                 Side::Buy => {
                     if fast_ema_value < slow_ema_value {
-                        println!("Selling...");
+                        info!("fast ema > slow ema");
 
                         self.order_market(symbol, &Side::Sell, quantity);
 
@@ -120,6 +124,7 @@ impl Bot {
 
         query.push(("signature", &signature));
 
+        info!("order: {} {} {}", side, quantity, symbol);
         let request = self.client.post(url).query(&query).build().unwrap();
         println!("{}", request.url());
 
@@ -132,6 +137,7 @@ impl Bot {
         let url = self.base_url.to_owned() + "/api/v3/klines";
         let url = Url::parse(&url).unwrap();
 
+        debug!("fetching data");
         let response = self
             .client
             .get(url)

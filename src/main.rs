@@ -1,5 +1,6 @@
 use bot::{Bot, Side};
 use clap::Parser;
+use log::info;
 use std::time;
 
 mod bot;
@@ -21,7 +22,7 @@ struct Cli {
     #[arg(short, long, default_value_t=String::from("30m"))]
     interval: String,
 
-    #[arg(short, long, default_value_t=10*60)]
+    #[arg(short, long, default_value_t = 10)]
     sleep_duration: u64,
 
     #[arg(short, long)]
@@ -32,6 +33,7 @@ struct Cli {
 }
 
 fn main() {
+    env_logger::init();
     let cli = Cli::parse();
 
     let api_key = dotenv::var("API_KEY").unwrap();
@@ -39,13 +41,14 @@ fn main() {
 
     let bot = Bot::new(&api_key, &api_secret);
 
+    info!("Starting Bot");
     bot.run(
         &cli.symbol,
         cli.quantity,
         cli.fast_ema,
         cli.slow_ema,
         &cli.interval.to_owned(),
-        &time::Duration::from_secs(cli.sleep_duration),
+        &time::Duration::from_secs(cli.sleep_duration * 60),
         &cli.last_move,
     );
 }
