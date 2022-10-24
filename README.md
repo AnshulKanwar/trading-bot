@@ -33,4 +33,5 @@ $ cargo run -- --fast-ema 20 --slow-ema 100  --quantity 10 --last-move buy BTCUS
 - [ ] Add logging
 - [ ] log trades in a csv
 - [ ] Add description for cli options
+- [ ] Add Tests
 - [x] Add cli
