@@ -5,7 +5,7 @@ Currently it is built to only use the EMA crossover strategy
 
 # Using
 
-Get you [Binance](https://www.binance.com/en/binance-api) API key and API secret and put them in the `.env` file.
+Get your [Binance](https://www.binance.com/en/binance-api) API key and API secret and put them in the `.env` file.
 
 ```
 API_KEY="your_api_key"
