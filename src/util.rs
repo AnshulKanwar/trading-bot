@@ -27,6 +27,9 @@ mod tests {
         let key = "my secret and secure key";
         let message = "hello world";
 
-        assert_eq!(get_signature(key, message), "0b6594ce57238a3c2473b0dfb9d700398044f7c43246dce5303bbc4a79fb24d3")
+        assert_eq!(
+            get_signature(key, message),
+            "0b6594ce57238a3c2473b0dfb9d700398044f7c43246dce5303bbc4a79fb24d3"
+        )
     }
 }

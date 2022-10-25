@@ -15,6 +15,7 @@ API_SECRET="your_api_secret"
 > **Warning**
 > Do not disclose your API keys. If the API keys were accidentally shared, please delete them immediately and create a new key.
 
+
 Now run the bot using
 
 ```
@@ -52,6 +53,7 @@ $ cargo run -- --fast-ema 20 --slow-ema 100  --quantity 10 --last-move buy BTCUS
 
 # TODO
 - [ ] Add error handling
+- [ ] Add tests 
 - [ ] Remove the use of `initial_side`
 - [x] Add logging
 - [x] Add cli

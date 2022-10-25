@@ -3,9 +3,10 @@ use crate::klines::{Kline, _Klines};
 use crate::util;
 use chrono::Utc;
 use clap::ValueEnum;
-use log::{info, debug};
-use reqwest::{header, Url};
+use log::{debug, info, error};
+use reqwest::{header, Url, StatusCode};
 use std::{fmt, thread, time};
+use serde::Deserialize;
 
 #[derive(Clone, ValueEnum)]
 pub enum Side {
@@ -20,6 +21,13 @@ impl fmt::Display for Side {
             Side::Sell => write!(f, "SELL"),
         }
     }
+}
+
+#[allow(dead_code)]
+#[derive(Deserialize, Debug)]
+struct Error {
+    code: i32,
+    msg: String,
 }
 
 pub struct Bot {
@@ -77,7 +85,7 @@ impl Bot {
                     if fast_ema_value > slow_ema_value {
                         info!("fast ema > slow ema");
 
-                        self.order_market(symbol, &Side::Buy, quantity);
+                        self.order_market(symbol, &Side::Buy, quantity).expect("could not place a buy order.");
 
                         last_move = Side::Buy;
                     }
@@ -86,7 +94,7 @@ impl Bot {
                     if fast_ema_value < slow_ema_value {
                         info!("fast ema > slow ema");
 
-                        self.order_market(symbol, &Side::Sell, quantity);
+                        self.order_market(symbol, &Side::Sell, quantity).expect("could not place a sell order");
 
                         last_move = Side::Sell;
                     }
@@ -97,7 +105,7 @@ impl Bot {
         }
     }
 
-    fn order_market(&self, symbol: &str, side: &Side, quantity: f32) {
+    fn order_market(&self, symbol: &str, side: &Side, quantity: f32) -> Result<(), Error> {
         let url = self.base_url.to_owned() + "/api/v3/order";
         let url = Url::parse(&url).unwrap();
 
@@ -125,12 +133,23 @@ impl Bot {
         query.push(("signature", &signature));
 
         info!("order: {} {} {}", side, quantity, symbol);
-        let request = self.client.post(url).query(&query).build().unwrap();
-        println!("{}", request.url());
+        let response = self.client.post(url).query(&query).send().unwrap();
+        debug!("sending request: {}", response.url());
 
-        let response = self.client.execute(request).unwrap();
-
-        println!("{}", response.text().unwrap());
+        match response.status() {
+            StatusCode::OK => {
+                debug!("Order Executed");
+                Ok(())
+            }
+            StatusCode::BAD_REQUEST => {
+                let error = response.json::<Error>().unwrap();
+                error!("{}", error.msg);
+                Err(error)
+            }
+            _ => {
+                Ok(())
+            }
+        }
     }
 
     fn fetch_data(&self, symbol: &str, interval: &str) -> Vec<Kline> {
