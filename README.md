@@ -49,7 +49,7 @@ Options:
 
 For example to run EMA crossover strategy with fast ema 20 and slow ema 100 on 10 BTCUSDT pair: 
 ```
-$ cargo run -- --fast-ema 20 --slow-ema 100  --quantity 10 --last-move buy BTCUSDT
+$ trading-bot --fast-ema 20 --slow-ema 100  --quantity 10 --last-move buy BTCUSDT
 ```
 
 # TODO
